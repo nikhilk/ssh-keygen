@@ -90,10 +90,6 @@ function ssh_keygen(location, opts, callback){
 							log('destroying pub key '+pubLocation);
 							fs.unlink(pubLocation, function(err){
 								if(err) return callback(err);
-								key = key.toString();
-								key = key.substring(0, key.lastIndexOf(" \n"));
-								pubKey = pubKey.toString();
-								pubKey = pubKey.substring(0, pubKey.lastIndexOf(" \n"));
 								return callback(undefined, {
 									key: key, pubKey: pubKey
 								});
