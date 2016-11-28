@@ -86,6 +86,7 @@ function ssh_keygen(location, opts, callback){
 				function readPubKey(){
 					log('reading pub key '+pubLocation);
 					fs.readFile(pubLocation, 'utf8', function(err, pubKey){
+						pubKey = pubKey.trim();
 						if(destroy){
 							log('destroying pub key '+pubLocation);
 							fs.unlink(pubLocation, function(err){
@@ -106,7 +107,7 @@ function ssh_keygen(location, opts, callback){
 	});
 };
 
-module.exports = function(opts, callback){
+function ssh_keygen_wrapper(opts, callback){
 	var location = opts.location;
 	if(!location) location = path.join(os.tmpDir(),'id_rsa');
 
@@ -122,3 +123,17 @@ module.exports = function(opts, callback){
 		ssh_keygen(location, opts, callback);
 	});
 };
+
+module.exports = function(opts, callback){
+	if(callback){
+		ssh_keygen_wrapper(opts, callback);
+		return;
+	}
+	return new Promise(function(resolve, reject){
+		ssh_keygen_wrapper(opts, function(e, o){
+			if (e) reject(e);
+			else resolve(o);
+		});
+	});
+};
+
